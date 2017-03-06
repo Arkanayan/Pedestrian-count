@@ -19,9 +19,26 @@ import subprocess as sp
 #            "-pix_fmt", "bgr24",
 #            "-vcodec", "rawvideo", "-"],
 #            stdin = sp.PIPE, stdout = sp.PIPE, bufsize=10**9)
+def detect_peoples(frame):
+    import cv2
+    hog = cv2.HOGDescriptor()
+    hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+    print("Enter processing")
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = imutils.resize(gray )
 
-hog = cv2.HOGDescriptor()
-hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+    (rects, weights) = hog.detectMultiScale(gray, winStride=(4, 4),
+            padding=(8, 8), scale=1.05)
+    
+    # for (x, y, w, h) in rects:
+    #     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+    
+    rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
+    pick = non_max_suppression(rects, probs=None, overlapThresh=0.65)
+
+    for (xA, yA, xB, yB) in pick:
+        cv2.rectangle(frame, (xA, yA), (xB, yB), (0, 255, 0), 2)
+    return len(pick)
 
 cap = cv2.VideoCapture('samples/random_people_walk.mp4')
 
@@ -41,10 +58,7 @@ multiplier = fps * seconds
 while success:
     curr_frame = cap.get(1)
     print("frame: ", curr_frame)
-    # fps = cap.get(cv2.CAP_PROP_FPS)
-    # if curr_frame != 0:
-    #     print("elapsed: ", fps/curr_frame)
-    # import copy
+
     # raw_image = pipe.stdout.read(640*360*3) # read 1280*720*3 bytes (= 1 frame)
     # frame =  numpy.fromstring(raw_image, dtype='uint8').reshape((360,640,3))
 
@@ -56,31 +70,13 @@ while success:
     frameId = int(round(cap.get(1)))
     # print("Res: ", frameId % multiplier)
     if int(frameId % multiplier) == 0:
-        print("Enter processing")
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = imutils.resize(gray )
-
-        (rects, weights) = hog.detectMultiScale(gray, winStride=(4, 4),
-                padding=(8, 8), scale=1.05)
-        
-        # for (x, y, w, h) in rects:
-        #     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        
-        rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
-        pick = non_max_suppression(rects, probs=None, overlapThresh=0.65)
-
-        for (xA, yA, xB, yB) in pick:
-            cv2.rectangle(frame, (xA, yA), (xB, yB), (0, 255, 0), 2)
+        print(detect_peoples(frame))
     
     cv2.imshow('orig', frame)
-    # cv2.imshow('non_max', frame)
-
-    # index += 1
-    # if index == 500:
-    #     break
-    #         
+    
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
 cv2.destroyAllWindows()
+
