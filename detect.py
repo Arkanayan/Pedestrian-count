@@ -4,6 +4,7 @@ import numpy
 import imutils
 import cv2
 import subprocess as sp
+import threading
 
 
 
@@ -19,7 +20,7 @@ import subprocess as sp
 #            "-pix_fmt", "bgr24",
 #            "-vcodec", "rawvideo", "-"],
 #            stdin = sp.PIPE, stdout = sp.PIPE, bufsize=10**9)
-def detect_peoples(frame):
+def count_peoples(frame):
     import cv2
     hog = cv2.HOGDescriptor()
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
@@ -38,9 +39,25 @@ def detect_peoples(frame):
 
     for (xA, yA, xB, yB) in pick:
         cv2.rectangle(frame, (xA, yA), (xB, yB), (0, 255, 0), 2)
+    print("Exit people count")
     return len(pick)
 
+def get_time_in_video(total_frames, frame_rate, curr_frame):
+    # return (total_frames * frame_rate) / curr_frame
+    return curr_frame / frame_rate
+
+def plot_people_count(fig, num_of_people=0, time=0):
+    # print("Peoples: ", num_of_people)
+    fig.bar(time, num_of_people, 1/1.5)
+    fig.draw()
+    return True
+
+def update_plot(frame, plt, time):
+    count_peoples = count_peoples(frame)
+    plot_people_count(plt, num_of_people, time)
+
 cap = cv2.VideoCapture('samples/random_people_walk.mp4')
+total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
 index = 0
 frameRate = cap.get(cv2.CAP_PROP_FPS)
@@ -54,6 +71,9 @@ success, image = cap.read()
 seconds = 1
 fps = cap.get(cv2.CAP_PROP_FPS)
 multiplier = fps * seconds
+
+import matplotlib.pyplot as plt
+plt.ion()
 
 while success:
     curr_frame = cap.get(1)
@@ -70,13 +90,17 @@ while success:
     frameId = int(round(cap.get(1)))
     # print("Res: ", frameId % multiplier)
     if int(frameId % multiplier) == 0:
-        print(detect_peoples(frame))
+        num_peoples = count_peoples(frame)
+        curr_time = get_time_in_video(total_frames, fps, curr_frame)
+        print("current time: ", curr_time)
+        plot_people_count(plt, num_peoples, curr_time)
     
     cv2.imshow('orig', frame)
     
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+plt.show()
 cap.release()
 cv2.destroyAllWindows()
 
