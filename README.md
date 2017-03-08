@@ -54,5 +54,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Built as per instructions given by Navin Manaswi
+* Built as per instructions given by **Navin Manaswi**
 
