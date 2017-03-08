@@ -38,6 +38,8 @@ Then install other libraries using ```pip``` or ```pip3```
 pip[3] install matplotlib rx imutils
 ```
 
+Another reference on installing opencv on Ubuntu 16.04: [http://www.pyimagesearch.com/2016/10/24/ubuntu-16-04-how-to-install-opencv/](http://www.pyimagesearch.com/2016/10/24/ubuntu-16-04-how-to-install-opencv/)
+
 ## Built With
 
 * [Visual Studio Code](https://code.visualstudio.com/) - The IDE used
