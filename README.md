@@ -1,6 +1,6 @@
 # Pedestrian detection and graphing
 
-Detect number of pedestrians in a frame and graph show it in a graph
+Detect number of pedestrians in a frame and show it in a graph
 
 ## Getting Started
 
@@ -40,8 +40,8 @@ pip[3] install matplotlib rx imutils
 
 ## Built With
 
-* [Visual Studio Code](https://code.visualstudio.com/) - The web framework used
-* [Anaconda](https://www.continuum.io/) - Dependency Management
+* [Visual Studio Code](https://code.visualstudio.com/) - The IDE used
+* [Anaconda](https://www.continuum.io/) - Python platform used
 
 
 ## Authors
