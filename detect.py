@@ -8,6 +8,18 @@ import threading
 
 import rx
 
+import argparse
+parser = argparse.ArgumentParser(description="Detect number of pedestrians and graph")
+parser.add_argument("-v", "--video", required=True, help="path to the video")
+args = parser.parse_args()
+
+# Check if the video exists or not
+from pathlib import Path
+video_file = Path(args.video)
+if not video_file.is_file():
+    print("Sorry, the video is not found.")
+    import sys
+    sys.exit()
 
 
 def count_peoples(frame):
@@ -15,7 +27,7 @@ def count_peoples(frame):
     import cv2
     hog = cv2.HOGDescriptor()
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
-    print("Enter processing")
+    # print("Enter processing")
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = imutils.resize(gray )
 
@@ -60,8 +72,8 @@ def update_plot(frame, plt, time):
     count_peoples = count_peoples(frame)
     plot_people_count(plt, num_of_people, time)
 
-# Specify path of the video here
-cap = cv2.VideoCapture('samples/random_people_walk.mp4')
+# Load the video
+cap = cv2.VideoCapture(args.video)
 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
 index = 0
@@ -91,7 +103,7 @@ pool_scheduler = ThreadPoolScheduler(optimal_thread_count)
 
 while success:
     curr_frame = cap.get(1)
-    print("frame: ", curr_frame)
+    # print("frame: ", curr_frame)
 
     success, frame = cap.read()
 
