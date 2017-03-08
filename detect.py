@@ -20,7 +20,9 @@ import threading
 #            "-pix_fmt", "bgr24",
 #            "-vcodec", "rawvideo", "-"],
 #            stdin = sp.PIPE, stdout = sp.PIPE, bufsize=10**9)
+
 def count_peoples(frame):
+    """ Count number of people in the frame given """
     import cv2
     hog = cv2.HOGDescriptor()
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
@@ -43,10 +45,12 @@ def count_peoples(frame):
     return len(pick)
 
 def get_time_in_video(total_frames, frame_rate, curr_frame):
+    """Calculate current time of video"""
     # return (total_frames * frame_rate) / curr_frame
     return curr_frame / frame_rate
 
 def plot_people_count(fig, num_of_people=0, time=0):
+    """Plot num of people in the plot given in fig"""
     # print("Peoples: ", num_of_people)
     fig.bar(time, num_of_people, 1/1.5)
     fig.draw()
@@ -68,6 +72,7 @@ start = time.time()
 success, image = cap.read()
 
 ### Setup parameters #####
+## Number of seconds to skip
 seconds = 1
 fps = cap.get(cv2.CAP_PROP_FPS)
 multiplier = fps * seconds
