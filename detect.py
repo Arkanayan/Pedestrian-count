@@ -72,14 +72,13 @@ def update_plot(frame, plt, time):
     count_peoples = count_peoples(frame)
     plot_people_count(plt, num_of_people, time)
 
+# Specify path of the video here
 cap = cv2.VideoCapture('samples/random_people_walk.mp4')
 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
 index = 0
 frameRate = cap.get(cv2.CAP_PROP_FPS)
-print(frameRate)
-import time
-start = time.time()
+print("Frame rate: ", frameRate)
 
 success, image = cap.read()
 
@@ -89,6 +88,7 @@ seconds = 1
 fps = cap.get(cv2.CAP_PROP_FPS)
 multiplier = fps * seconds
 
+# Make plot interactive, so it can be updated while running the script
 import matplotlib.pyplot as plt
 plt.ion()
 
@@ -96,6 +96,7 @@ plt.ion()
 import multiprocessing
 from threading import current_thread
 from rx.concurrency import ThreadPoolScheduler
+
 # calculate number of CPU's, then create a ThreadPoolScheduler with that number of threads
 optimal_thread_count = multiprocessing.cpu_count()
 pool_scheduler = ThreadPoolScheduler(optimal_thread_count)
@@ -104,21 +105,12 @@ while success:
     curr_frame = cap.get(1)
     print("frame: ", curr_frame)
 
-    # raw_image = pipe.stdout.read(640*360*3) # read 1280*720*3 bytes (= 1 frame)
-    # frame =  numpy.fromstring(raw_image, dtype='uint8').reshape((360,640,3))
-
     success, frame = cap.read()
-
-    # frame1 = frame.clone()
-    # frame1 = np.array(frame)
 
     frameId = int(round(cap.get(1)))
     # print("Res: ", frameId % multiplier)
     if int(frameId % multiplier) == 0:
-        # num_peoples = count_peoples(frame)
         curr_time = get_time_in_video(total_frames, fps, curr_frame)
-        # print("current time: ", curr_time)
-        # plot_people_count(plt, num_peoples, curr_time)
 
         # here Rx is used to compute num of peoples on different thread and
         # Also we are passing current time in zip operator for plotting purposes
@@ -128,6 +120,7 @@ while success:
     
     cv2.imshow('orig', frame)
 
+    # Press 'q' to exit
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
