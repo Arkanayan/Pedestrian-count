@@ -114,9 +114,10 @@ while success:
 
         # here Rx is used to compute num of peoples on different thread and
         # Also we are passing current time in zip operator for plotting purposes
-        rx.Observable.zip(count_people_observable(frame.copy()), rx.Observable.from_([curr_time]), lambda peoples, time: (peoples, time)) \
+        rx.Observable.zip(count_people_observable(frame.copy()), rx.Observable.from_([curr_time, frame.copy()]), lambda peoples, time: (peoples, time, frame)) \
             .subscribe_on(pool_scheduler) \
             .subscribe(on_next=lambda people_and_time: (plt.pause(0.05), plot_people_count(plt, people_and_time[0], people_and_time[1])))
+               # cv2.imwrite("screenshots/people_"+str(people_and_time[1])+".png", people_and_time[2]), plt.savefig("screenshots/plot_"+str(people_and_time[1])+".png")))
     
     cv2.imshow('orig', frame)
 
@@ -124,7 +125,7 @@ while success:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-plt.show()
+# plt.show()
 cap.release()
 cv2.destroyAllWindows()
 
