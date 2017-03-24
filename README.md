@@ -2,6 +2,16 @@
 
 Detect number of pedestrians in a frame and show it in a graph
 
+The analyzing of the video is done in a different **thread** so there will be no lag when displaying the video.
+
+## Algorithm Used
+[**HOG** (Histogram of Oriented Gradients)](https://en.wikipedia.org/wiki/Histogram_of_oriented_gradients)
+
+### Parameters ([Explanation of parameters](http://www.pyimagesearch.com/2015/11/16/hog-detectmultiscale-parameters-explained/))
+- **winStride** =   (4, 4)
+- **padding**   =   (8, 8) 
+- **scale**     =   1.05
+
 ## Getting Started
 
 Run the script by specifying the video
